@@ -18,7 +18,7 @@ def get_counts_csv(
         print("Reading in CSV", flush=True) #ARGUMENT NAMES A ETE RAJOUTES POUR COLLER AUX FICHIER DATA_N_LW.csv ... IL FAUR L'ENLEVER SI LES NOMS DES COLONNES NE CORRESPONDENT PAS
     try:
         raw = pd.read_csv(file, skiprows=7,decimal=",", names = ["Timestamp","Gyro X","Gyro Y","Gyro Z","Accelerometer X","Accelerometer Y","Accelerometer Z","Event","Quat W","Quat X","Quat Y","Quat Z"], dtype = {"Event":str},low_memory=False) #names=list(dtype_dict.keys()), dtype=dtype_dict)
-    except pandas.errors.ParserError:
+    except pd.errors.ParserError:
         raw = pd.read_csv(file, skiprows=7,decimal=",", names = ["Timestamp","Gyro X","Gyro Y","Gyro Z","Accelerometer X","Accelerometer Y","Accelerometer Z","Quat W","Quat X","Quat Y","Quat Z"],low_memory=False) #names=list(dtype_dict.keys()), dtype=dtype_dict)
 
     if time_column is not None:

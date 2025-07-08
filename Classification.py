@@ -126,7 +126,7 @@ for file in folder: #[0:7]
 
             # non_dom 
             # Synchronisation des données X des capteurs et des annotations Y
-            if label.value == "Start_non_dom" :
+            if label.value == "Start_LW" :
                 if int(round(float(my_sheet.cell(label.row, 12).value))) < float(my_sheet.cell(label.row, 12).value):
                     start_sensor = int(round(float(my_sheet.cell(label.row, 12).value))) + 1
                 else:
