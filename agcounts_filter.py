@@ -16,22 +16,11 @@ def get_counts_csv(
 ):
     if verbose:
         print("Reading in CSV", flush=True) #ARGUMENT NAMES A ETE RAJOUTES POUR COLLER AUX FICHIER DATA_N_LW.csv ... IL FAUR L'ENLEVER SI LES NOMS DES COLONNES NE CORRESPONDENT PAS
-    """dtype_dict = {
-        "Timestamp": str,
-        "Gyro X": str,
-        "Gyro Y": str,
-        "Gyro Z": str,
-        "Accelerometer X": str,
-        "Accelerometer Y": str,
-        "Accelerometer Z": str,
-        "Event": str,
-        "Quat W":str,
-        "Quat X":str, 
-        "Quat Y":str,
-        "Quat Z":str,
-    }"""
-    
-    raw = pd.read_csv(file, skiprows=7,decimal=",", names = ["Timestamp","Gyro X","Gyro Y","Gyro Z","Accelerometer X","Accelerometer Y","Accelerometer Z","Event","Quat W","Quat X","Quat Y","Quat Z"]) #names=list(dtype_dict.keys()), dtype=dtype_dict)
+    try:
+        raw = pd.read_csv(file, skiprows=7,decimal=",", names = ["Timestamp","Gyro X","Gyro Y","Gyro Z","Accelerometer X","Accelerometer Y","Accelerometer Z","Event","Quat W","Quat X","Quat Y","Quat Z"], dtype = {"Event":str},low_memory=False) #names=list(dtype_dict.keys()), dtype=dtype_dict)
+    except pandas.errors.ParserError:
+        raw = pd.read_csv(file, skiprows=7,decimal=",", names = ["Timestamp","Gyro X","Gyro Y","Gyro Z","Accelerometer X","Accelerometer Y","Accelerometer Z","Quat W","Quat X","Quat Y","Quat Z"],low_memory=False) #names=list(dtype_dict.keys()), dtype=dtype_dict)
+
     if time_column is not None:
         ts = raw[time_column]
         ts = pd.to_datetime(ts)
@@ -60,8 +49,8 @@ def get_counts_csv(
 def convert_counts_csv(
     file,
     outfile,
-    freq: int=100,
-    epoch: int=60,
+    freq: int=128,
+    epoch: int=1,
     verbose: bool = False,
     time_column: str = None,
 ):
@@ -76,7 +65,7 @@ def convert_AC(file_dom):# ///////////////////////// AJOUTER NON DOM_COUNT PLUS 
     dom_counts = get_counts_csv(file_dom, freq=128, epoch=1)
     dom_counts = convert_counts_csv(
         file_dom,
-        outfile="Activity_counts_files/dom_counts.csv",
+        outfile="C:/Users/roman/Documents/BEaCHILD/Activity_counts/AC.csv",
         freq=128,
         epoch=1,
         verbose=True,
