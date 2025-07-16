@@ -284,7 +284,7 @@ disp.figure_.show()
 #On a X_dom et Y_dom : construire un Y_pred_2 et le comparer à Y_dom
 Y_pred_75 = []
 
-for idx_data in range(0, len(X_clean)-1):
+for idx_data in range(0, len(X_clean)-2):
     seuil = X_clean[idx_data] + X_clean[idx_data+1]
     if seuil >= 75 :
         Y_pred_75.append("mouvement")
@@ -294,7 +294,7 @@ for idx_data in range(0, len(X_clean)-1):
         Y_pred_75.append(None)
 
 #Le dernier de Y_pred_75 ne peut pas se joindre à 2 sec avec la valeur d'après
-Y_pred_75.append("non mouvement")
+#Y_pred_75.append("non mouvement")
 
 # Evaluate the model
 accuracy = accuracy_score(Y_clean, Y_pred_75)

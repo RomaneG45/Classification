@@ -50,7 +50,7 @@ def convert_counts_csv(
     file,
     outfile,
     freq: int=128,
-    epoch: int=1,
+    epoch: int=2,
     verbose: bool = False,
     time_column: str = None,
 ):
@@ -62,12 +62,12 @@ def convert_counts_csv(
 
 
 def convert_AC(file_dom):# ///////////////////////// AJOUTER NON DOM_COUNT PLUS TARD
-    dom_counts = get_counts_csv(file_dom, freq=128, epoch=1)
+    dom_counts = get_counts_csv(file_dom, freq=128, epoch=2)
     dom_counts = convert_counts_csv(
         file_dom,
         outfile="C:/Users/roman/Documents/BEaCHILD/Activity_counts/AC.csv",
         freq=128,
-        epoch=1,
+        epoch=2,
         verbose=True,
         time_column= None,
     )
