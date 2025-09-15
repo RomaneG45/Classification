@@ -1,13 +1,12 @@
 """
+Fichier de brouillon pour tester la récupération des données et l'association aux annotations. Entrainement d'un Random Forest sur 80% des données (train) et test sur 20% (test), puis test du seuil AC>75 en combinant les annotations après calculs des AC à 1s.
+
 1. Lire les fichiers BIN, conversion dans la bonne unité et transformer en AC
 2. Récuperer les annotations
 3. Associer annotations fichier excel et valeurs des fichiers BIN (fait dans 1. et 2.)
 4. Moyennes écart types des fenêtres?
 5. Entrainement de Random Forest : (split en train et test, application de RF au train puis au test)
 6. Analyser des résultats (matrices de confusion, accuracy score)
-
-LES DONNéES DE Y SONT BIEN RéCUPéRéES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 
 """
 import os
@@ -38,16 +37,16 @@ with open("C:/Users/BEaCHILD3/Documents/Stage_Romane/Classification/File_dom.csv
     writer.writerows(header_row)"""
 
 # Initialisation des listes contenant les données des capteurs
-X_non_dom = [] #X_non_dom = [[]]
-X_dom = [] #X_dom = [[]]
+X_non_dom = [] 
+X_dom = []
 idx_X_non_dom = 0
 idx_X_dom = 0
 idx_Y_dom = 0
 idx_Y_non_dom = 0
 
 # Initialisation des listes contenant les annotations vidéos
-Y_non_dom = [] #Y_non_dom = [[]] 
-Y_dom = [] #Y_dom = [[]]
+Y_non_dom = [] 
+Y_dom = [] 
 
 
 #Parcourir les fichiers CSV
@@ -71,21 +70,15 @@ for file in folder: #[0:7]
 
         # Conversion en AC 
         dom_AC = convert_AC(folder_path + "/" + file)
-        #dom_AC = {"AC": pd.Series(["A REMPLACER C'EST POUR ALLER PLUS VITE DANS L'ALGO","A REMPLACER C'EST POUR ALLER PLUS VITE DANS L'ALGO"])}
-
 
         # Enregistrement des données des capteurs dans les listes qui seront donnnées au classificateur
         if file[-11:-4] == "non_dom":
             list_dom_AC = dom_AC["AC"].tolist() # Conversion du type pd.serie en type list
-            """X_non_dom.append(list_dom_AC)
-            idx_X_non_dom += 1 """
             for ac in list_dom_AC :
                 X_non_dom.append(ac)
 
         elif file[-7:-4] == "dom":
             list_dom_AC = dom_AC["AC"].tolist()
-            """X_dom.append(list_dom_AC)
-            idx_X_dom += 1 """
             for ac in list_dom_AC:
                 X_dom.append(ac)
 
@@ -115,11 +108,9 @@ for file in folder: #[0:7]
                 else:
                     start_sensor = int(round(float(my_sheet.cell(label.row, 12).value))) 
                 decalage_dom += start_sensor - float(my_sheet.cell(label.row, 12).value)
-                #print(f"Droite : le départ des capteur est en décalage de (nomrlament 7) : {start_sensor}")
                 #Ajouter un nb start_sensor de none au début
                 for decalage in range(start_sensor):
-                    #Y_dom[idx_Y_dom].append("différent start droit")# ///////////////////////////////////////// Mettre .append(None) 
-                    Y_dom.append(None) #.append("différent start droit")
+                    Y_dom.append(None) 
                 previous_row_dom = label.row
                 # Pour les cas ou il y a des annotations avant le start 
                 allow_start_dom = True
@@ -134,8 +125,7 @@ for file in folder: #[0:7]
                 decalage_non_dom += start_sensor - float(my_sheet.cell(label.row, 12).value)
                 #Ajouter un nb start_sensor de none au début
                 for decalage in range(start_sensor):
-                    Y_non_dom.append(None) #append("différent start gauche")
-                    # Y_non_dom[idx_Y_non_dom].append("différent start gauche") #/////////////////////////////////////////////append(None)
+                    Y_non_dom.append(None) 
                 previous_row_non_dom = label.row
                 # Pour les cas ou il y a des annotations avant le start 
                 allow_start_non_dom = True
@@ -151,29 +141,23 @@ for file in folder: #[0:7]
                 if my_sheet.cell(row, 12).value != my_sheet.cell(previous_row_dom, 13).value:
                     difference = round(float(my_sheet.cell(row, 12).value)) - round(float(my_sheet.cell(previous_row_dom , 13).value)) 
                     for diff in range(0,difference):
-                        Y_dom.append(None) #.append("décalage annotations")
-                        #Y_dom[idx_Y_dom].append("décalage annotations")
+                        Y_dom.append(None) 
                     
                 # Synchronisation des données des capteurs avec les annotations
                 nb_repetitions = int(round(float(my_sheet.cell(label.row, 13).value))) - int(round(float(my_sheet.cell(label.row, 12).value))) 
                 for nb_sec in range(nb_repetitions): 
-                    #if X_dom and (len(Y_dom[idx_Y_dom]) == len(X_dom[idx_X_dom-1])) : 
                     if X_dom and (len(Y_dom) == len(X_dom)) :
                         break
                     if label.value[3:13] == "sédentaire":
-                        # Y_dom[idx_Y_dom].append("non mouvement")
                         Y_dom.append("non mouvement")
                     elif label.value[3:7] =="mouv":
-                        #Y_dom[idx_Y_dom].append("mouvement")
                         Y_dom.append("mouvement")
                     elif label.value[3:12] == "non noté":
-                        #Y_dom[idx_Y_dom].append("non noté") #.append(None) 
-                        Y_dom.append(None) #("non noté")
+                        Y_dom.append(None) 
 
                 #Au prochain tour, l'indice de la ligne actuelle sera l'index de la ligne précédente
                 previous_row_dom = label.row
-                    
-                    
+
 
             elif label.value[0:2] == "LW" and allow_start_non_dom:
                 
@@ -184,31 +168,24 @@ for file in folder: #[0:7]
                 if my_sheet.cell(row, 12).value != my_sheet.cell(previous_row_non_dom, 13).value:
                     difference = round(float(my_sheet.cell(row, 12).value)) - round(float(my_sheet.cell(previous_row_non_dom , 13).value)) 
                     for diff in range(0,difference):
-                        Y_non_dom.append(None) #.append("décalage annotations")
-                        #Y_non_dom[idx_Y_non_dom].append("décalage annotations")
+                        Y_non_dom.append(None) 
 
                 # Synchronisation des données des capteurs avec les annotations
                 nb_repetitions = int(round(float(my_sheet.cell(label.row, 13).value))) - int(round(float(my_sheet.cell(label.row, 12).value)))
                 for nb_sec in range(nb_repetitions): 
-                    #if X_non_dom and (len(Y_non_dom[idx_Y_non_dom]) == len(X_non_dom[idx_X_non_dom-1])) :
                     if X_non_dom and (len(Y_non_dom) == len(X_non_dom)): 
                         break
                     if label.value[3:13] == "sédentaire":
-                        #Y_non_dom[idx_Y_non_dom].append("non mouvement")
                         Y_non_dom.append("non mouvement")
                     elif label.value[3:7] =="mouv":
-                        #Y_non_dom[idx_Y_non_dom].append("mouvement")
                         Y_non_dom.append("mouvement")
                     elif label.value[3:12] == "non noté":
-                        #Y_non_dom[idx_Y_non_dom].append(None)
                         Y_non_dom.append(None)
 
                 #Au prochain tour, l'indice de la ligne actuelle sera l'index de la ligne précédente
                 previous_row_non_dom = label.row
         
         # CROPER X A L ALONGUEUR DE Y 
-        #X_dom[idx_Y_dom] = X_dom[idx_Y_dom][:len(Y_dom[idx_Y_dom])]
-        #X_non_dom[idx_Y_non_dom] = X_non_dom[idx_Y_non_dom][:len(Y_non_dom[idx_Y_non_dom])]
         X_dom = X_dom[:len(Y_dom)]
         X_non_dom = X_non_dom[:len(Y_non_dom)]
         Y_dom = Y_dom[:len(X_dom)]
@@ -217,8 +194,6 @@ for file in folder: #[0:7]
         # Au prochain tour, les annotations seront celles de l'enregistrement +1
         idx_Y_dom += 1
         idx_Y_non_dom += 1
-        #Y_dom.append([])
-        #Y_non_dom.append([])
 
         # Couper les données et les annotations à la même taille
         # Code brouillon test : à changer
@@ -228,9 +203,6 @@ for file in folder: #[0:7]
 
         print(f"len X_dom {len(X_dom)}")
         print(f"len Y_dom {len(Y_dom)}")
-
-        #print(f"données de X_dom : {X_dom[idx_X_dom-1][2210:2220]}")
-        #print(f"annotations de Y_dom : {Y_dom[idx_Y_dom-1][2210:2220]}")# Le chiffre N dans Y_dom[idx_Y_dom-1][N:20] est le bon chiffre, on regarde le meme dans le excel pas celui +1
 
 temps_fin = datetime.now()
 
@@ -251,8 +223,8 @@ Y_clean = Y_array[mask]
 
 
 # Aplatir les données (mettre au bon format pour les modèles)
-X_flat = np.vstack(X_clean)  # (n_total_samples, n_features)
-Y_flat = np.hstack(Y_clean)  # (n_total_samples,)
+X_flat = np.vstack(X_clean) 
+Y_flat = np.hstack(Y_clean) 
 
 # Split data into train and test samples
 X_train, X_test, y_train, y_test = train_test_split(X_flat, Y_flat, test_size=0.3, random_state=42)
