@@ -14,12 +14,20 @@ def get_counts_csv(
     verbose: bool = False,
     time_column: str = None,
 ):
+    # Récupération des noms des colonnes pour pouvoir lire le fichier (pas le m^me pour tous)
+    csv_file_column = pd.read_csv(file, skiprows=5, sep = ',', low_memory = False)
+    lst_column = list(csv_file_column)
+
     if verbose:
         print("Reading in CSV", flush=True) #ARGUMENT NAMES A ETE RAJOUTES POUR COLLER AUX FICHIER DATA_N_LW.csv ... IL FAUR L'ENLEVER SI LES NOMS DES COLONNES NE CORRESPONDENT PAS
-    try:
-        raw = pd.read_csv(file, skiprows=7,decimal=",", names = ["Timestamp","Gyro X","Gyro Y","Gyro Z","Accelerometer X","Accelerometer Y","Accelerometer Z","Event","Quat W","Quat X","Quat Y","Quat Z"], dtype = {"Event":str},low_memory=False) #names=list(dtype_dict.keys()), dtype=dtype_dict)
-    except pd.errors.ParserError:
-        raw = pd.read_csv(file, skiprows=7,decimal=",", names = ["Timestamp","Gyro X","Gyro Y","Gyro Z","Accelerometer X","Accelerometer Y","Accelerometer Z","Quat W","Quat X","Quat Y","Quat Z"],low_memory=False) #names=list(dtype_dict.keys()), dtype=dtype_dict)
+    #try:
+    if lst_column == ["Time","Gyro X","Gyro Y","Gyro Z","Accel X","Accel Y","Accel Z","Event","Quat W","Quat X","Quat Y","Quat Z","Unnamed: 12"]:
+        raw = pd.read_csv(file, skiprows=7,decimal=",", names = ["Time","Gyro X","Gyro Y","Gyro Z","Accel X","Accel Y","Accel Z","Event","Quat W","Quat X","Quat Y","Quat Z","Unnamed: 12"], dtype = {"Event":str},low_memory=False) #names=list(dtype_dict.keys()), dtype=dtype_dict)
+    #except pd.errors.ParserError:
+    elif lst_column == ['Time', 'Gyro X', 'Gyro Y', 'Gyro Z', 'Accel X', 'Accel Y', 'Accel Z', 'Quat W', 'Quat X', 'Quat Y', 'Quat Z', 'Unnamed: 11']:
+        raw = pd.read_csv(file, skiprows=7,decimal=",", names = ["Time","Gyro X","Gyro Y","Gyro Z","Accel X","Accel Y","Accel Z","Quat W","Quat X","Quat Y","Quat Z"],low_memory=False) #names=list(dtype_dict.keys()), dtype=dtype_dict)
+
+
 
     if time_column is not None:
         ts = raw[time_column]
@@ -28,7 +36,7 @@ def get_counts_csv(
         ts = ts.dt.round(time_freq)
         ts = ts.unique()
         ts = pd.DataFrame(ts, columns=[time_column])
-    raw = raw[["Accelerometer X", "Accelerometer Y", "Accelerometer Z"]].astype(float)
+    raw = raw[["Accel X", "Accel Y", "Accel Z"]].astype(float)
     if verbose:
         print("Converting to array", flush=True)
     raw = np.array(raw)
@@ -50,7 +58,7 @@ def convert_counts_csv(
     file,
     outfile,
     freq: int=128,
-    epoch: int=2,
+    epoch: int=1,
     verbose: bool = False,
     time_column: str = None,
 ):
@@ -61,16 +69,15 @@ def convert_counts_csv(
     return counts
 
 
-def convert_AC(file_dom):# ///////////////////////// AJOUTER NON DOM_COUNT PLUS TARD
-    dom_counts = get_counts_csv(file_dom, freq=128, epoch=2)
+def convert_AC(file_dom):
+    dom_counts = get_counts_csv(file_dom, freq=128, epoch=1)
     dom_counts = convert_counts_csv(
         file_dom,
         outfile="C:/Users/roman/Documents/BEaCHILD/Activity_counts/AC.csv",
         freq=128,
-        epoch=2,
+        epoch=1,
         verbose=True,
         time_column= None,
     )
 
-
-    return dom_counts # ///////////////////////// AJOUTER NON DOM_COUNT PLUS TARD
+    return dom_counts 
