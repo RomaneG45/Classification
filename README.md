@@ -17,6 +17,9 @@
 - RandomForest sur les Activity Counts (Imbalanced Random Forest avec validation croisée en LeaveOneOut)
 - Clustering sur les Activity Counts (test de Kmeans, DBSCAN et GMM, les meilleurs scores venant de KMEANS)
 
+## A changer lors de l'execution
+Faire attention aux chemins des fichiers et à l'index des fichiers lus dans le dossier renseigné. Pour lire 1 enregistrement à la fois il faut lire 3 fichiers : le capteur du membre dominant, le capteur du membre non dominant et le fichier d'annotations. Attention aussi lorsqu'il y a récupération des données gyroscopiques : changer l'index des fichiers lus dans la récupération des données d'accélération (au début) ET dans la récupération des données gyroscopiques (plus bas dans le code).
+
 ## Résultats et conclusions
 Les méthodes AC>0, AC>0 avec fenetre de 2s, AC>2, AC>2 avec fenetre de 2s montrent des résultats généraux bons à excellents, mais une prédiction de la sédentarité plutôt mauvaise (résultats retrouvés dans la littérature). Les méthodes de Puissance>1, Puissance>1 avec fenetre de 2s, et Random Forest montrent aussi de bons résultats généraux mais des prédictions de sédentarité très mauvais.
 En revanche, les méthodes AC>75, le clustering et le seuil adaptatif de Coley présentent des taux d'accuracy moyens, bien inférieurs aux autres méthodes.
@@ -29,6 +32,7 @@ La même méthode est appliquée pour tester les différents seuils :
 3. Facultatif suivant la méthode : récupération et nettoyage des données gyroscopiques.
 4. Création et prédiction du seuil
 5. Calcul des métriques : Accuracy et F1 scores (F1 mouvement, F1 non mouvement, F1 weighted, F1 macro)
+
 
 
 
